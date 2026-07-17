@@ -16,14 +16,25 @@ jobs:
           architecture: x64
       - run: flutter pub get
 
-      - name: Patch Swift Package Manager Target version
+      - name: Build iOS App with Watcher Patch
         run: |
-          sed -i '' 's/\.iOS("13.0")/\.iOS("15.0")/g' ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift
-
-      - run: pod repo update
-        working-directory: ios
-
-      - run: flutter build ios --no-pub --release --no-codesign
+          (
+            while true; do
+              FILE="ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift"
+              if [ -f "$FILE" ]; then
+                if grep -q '\.iOS("13.0")' "$FILE"; then
+                  sed -i '' 's/\.iOS("13.0")/\.iOS("15.0")/g' "$FILE"
+                  echo "Watcher patched Package.swift to iOS 15.0"
+                fi
+              fi
+              sleep 0.2
+            done
+          ) &
+          WATCHER_PID=$!
+          
+          flutter build ios --release --no-codesign
+          
+          kill $WATCHER_PID || true
 
       - run: mkdir Payload
         working-directory: build/ios/iphoneos
