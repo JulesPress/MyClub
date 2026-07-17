@@ -16,10 +16,6 @@ jobs:
           architecture: x64
       - run: flutter pub get
 
-      - name: Patch Swift Package Manager Target version
-        run: |
-          sed -i '' 's/\.iOS("13.0")/\.iOS("15.0")/g' ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift
-
       - run: pod repo update
         working-directory: ios
 
