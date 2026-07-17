@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "808304819683",
+    "project_id": "padelsquare-d0697",
+    "storage_bucket": "padelsquare-d0697.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808304819683:android:67da935b3789f9af1274d6",
+        "android_client_info": {
+          "package_name": "com.padelsquare.padelsquare_staff_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZryGzdcXEJr6OEuA_5YyxGC0HGOlTPag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

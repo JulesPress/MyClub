@@ -1,0 +1,25 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "padelsquare-d0697",
+          "appId": "1:808304819683:android:67da935b3789f9af1274d6",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "padelsquare-d0697",
+          "configurations": {
+            "android": "1:808304819683:android:67da935b3789f9af1274d6",
+            "ios": "1:808304819683:ios:2c09d427862ce9b11274d6"
+          }
+        }
+      }
+    }
+  }
+}
