@@ -16,6 +16,9 @@ jobs:
 
       - run: flutter pub get
 
+      - name: Inject Firebase Options
+        run: echo "${{ secrets.FIREBASE_OPTIONS_BASE64 }}" | base64 --decode > lib/firebase_options.dart
+
       - name: Build Flutter Web
         run: flutter build web --release
 
@@ -53,6 +56,12 @@ jobs:
 
       - run: flutter pub get
 
+      - name: Inject Firebase Options
+        run: echo "${{ secrets.FIREBASE_OPTIONS_BASE64 }}" | base64 --decode > lib/firebase_options.dart
+
+      - name: Inject Google Services (Android)
+        run: echo "${{ secrets.GOOGLE_SERVICES_BASE64 }}" | base64 --decode > android/app/google-services.json
+
       - name: Build Android APK
         run: flutter build apk --release
 
@@ -77,6 +86,9 @@ jobs:
           channel: 'stable'
           architecture: x64
       - run: flutter pub get
+
+      - name: Inject Firebase Options
+        run: echo "${{ secrets.FIREBASE_OPTIONS_BASE64 }}" | base64 --decode > lib/firebase_options.dart
 
       - name: Build iOS App with Watcher Patch
         run: |
@@ -129,6 +141,9 @@ jobs:
           architecture: x64
 
       - run: flutter pub get
+
+      - name: Inject Firebase Options
+        run: echo "${{ secrets.FIREBASE_OPTIONS_BASE64 }}" | base64 --decode > lib/firebase_options.dart
 
       - name: Enable macOS desktop
         run: flutter config --enable-macos-desktop

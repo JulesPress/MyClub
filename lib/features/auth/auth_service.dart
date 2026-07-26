@@ -41,10 +41,24 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    await _auth.signInWithEmailAndPassword(
+    final cred = await _auth.signInWithEmailAndPassword(
       email: email.trim(),
       password: password.trim(),
     );
+
+    // If the user no longer has an account in the DB, forget them and reject login
+    final user = cred.user;
+    if (user != null) {
+      final doc = await _firestore.collection('users').doc(user.uid).get();
+      if (!doc.exists) {
+        try {
+          await user.delete();
+        } catch (_) {
+          await _auth.signOut();
+        }
+        throw Exception('User no longer exists in database');
+      }
+    }
   }
 
   Future<void> signOut() async {

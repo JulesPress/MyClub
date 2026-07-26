@@ -244,12 +244,16 @@ class HomeTab extends StatelessWidget {
                       children: [
                         const Text('Today agenda',
                             style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w600)),
+                                color: AppTheme.darkBg,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600)),
                         const SizedBox(height: 8),
                         Text(
                           '$todayEventCount event${todayEventCount == 1 ? '' : 's'} today and $myTaskCount active task${myTaskCount == 1 ? '' : 's'}.',
                           style: const TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
+                              color: AppTheme.darkBg,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -574,18 +578,18 @@ class _CalendarTabState extends State<CalendarTab> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? AppTheme.softGreenDark.withValues(alpha: 0.15)
+                            ? AppTheme.softGreenDark.withValues(alpha: 0.3)
                             : isToday
-                                ? AppTheme.softGreenDark.withValues(alpha: 0.08)
-                                : AppTheme.darkBg,
+                                ? AppTheme.softGreenDark.withValues(alpha: 0.2)
+                                : AppTheme.softGreenDark.withValues(alpha: 0.06),
                         border: Border(
                           right: const BorderSide(color: AppTheme.darkBorder, width: 0.5),
                           bottom: const BorderSide(color: AppTheme.darkBorder, width: 0.5),
                           top: isSelected
-                              ? const BorderSide(color: AppTheme.softGreenDark, width: 1.5)
+                              ? const BorderSide(color: AppTheme.softGreen, width: 1.5)
                               : BorderSide.none,
                           left: isSelected
-                              ? const BorderSide(color: AppTheme.softGreenDark, width: 1.5)
+                              ? const BorderSide(color: AppTheme.softGreen, width: 1.5)
                               : BorderSide.none,
                         ),
                       ),
@@ -596,13 +600,13 @@ class _CalendarTabState extends State<CalendarTab> {
                           children: [
                             // Day number
                             Container(
-                              width: 26,
-                              height: 26,
+                              width: 28,
+                              height: 28,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: isToday
-                                    ? AppTheme.softGreenDark
+                                    ? AppTheme.softGreen
                                     : Colors.transparent,
                               ),
                               child: Text(
@@ -611,12 +615,12 @@ class _CalendarTabState extends State<CalendarTab> {
                                   color: isToday
                                       ? AppTheme.darkBg
                                       : isInMonth
-                                          ? AppTheme.textLight
+                                          ? Colors.white
                                           : AppTheme.textMuted,
                                   fontWeight: isToday
-                                      ? FontWeight.w700
-                                      : FontWeight.w500,
-                                  fontSize: 13,
+                                      ? FontWeight.w800
+                                      : FontWeight.w600,
+                                  fontSize: 14,
                                 ),
                               ),
                             ),

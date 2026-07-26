@@ -35,9 +35,22 @@ class AuthGate extends StatelessWidget {
             }
 
             if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
+              // The user exists in Auth but their Firestore document is gone.
+              // We forget them completely by deleting their Auth account and signing out.
+              WidgetsBinding.instance.addPostFrameCallback((_) async {
+                final currUser = FirebaseAuth.instance.currentUser;
+                if (currUser != null) {
+                  try {
+                    await currUser.delete();
+                  } catch (_) {
+                    await FirebaseAuth.instance.signOut();
+                  }
+                }
+              });
+
               return const Scaffold(
                 body: Center(
-                  child: Text('User profile not found'),
+                  child: Text('Account deactivated. Returning to login...'),
                 ),
               );
             }
