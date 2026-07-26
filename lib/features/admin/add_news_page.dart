@@ -124,7 +124,7 @@ class _AddNewsPageState extends State<AddNewsPage> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade400),
+                border: Border.all(color: AppTheme.darkBorder),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Row(
@@ -135,7 +135,7 @@ class _AddNewsPageState extends State<AddNewsPage> {
                   const Spacer(),
                   Text(
                     'Tap to change',
-                    style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
+                    style: TextStyle(color: AppTheme.textMuted, fontSize: 13),
                   ),
                 ],
               ),

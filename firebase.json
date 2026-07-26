@@ -18,11 +18,11 @@
     ],
     "headers": [
       {
-        "source": "**/*.@(js|mjs)",
+        "source": "**/*.@(js|mjs|html)",
         "headers": [
           {
-            "key": "Content-Type",
-            "value": "application/javascript"
+            "key": "Cache-Control",
+            "value": "max-age=0, no-cache, no-store, must-revalidate"
           }
         ]
       }

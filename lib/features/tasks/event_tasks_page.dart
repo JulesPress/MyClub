@@ -51,10 +51,10 @@ class EventTasksPage extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.task_outlined, size: 64, color: Colors.grey),
+                  Icon(Icons.task_outlined, size: 64, color: AppTheme.textMuted),
                   SizedBox(height: 12),
                   Text('No tasks for this event',
-                      style: TextStyle(fontSize: 16, color: Colors.grey)),
+                      style: TextStyle(fontSize: 16, color: AppTheme.textMuted)),
                 ],
               ),
             );
@@ -168,14 +168,14 @@ class _ClaimableTaskCard extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                         decoration:
                             isDone ? TextDecoration.lineThrough : null,
-                        color: isDone ? Colors.grey : null,
+                        color: isDone ? AppTheme.textMuted : null,
                       ),
                     ),
                     if (task.description.isNotEmpty)
                       Text(
                         task.description,
                         style: TextStyle(
-                            fontSize: 13, color: Colors.grey.shade600),
+                            fontSize: 13, color: AppTheme.textMuted),
                       ),
                     const SizedBox(height: 4),
 
@@ -197,7 +197,7 @@ class _ClaimableTaskCard extends StatelessWidget {
                           'Claimed by ${task.claimedByName ?? 'another employee'}',
                           style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey.shade600,
+                              color: AppTheme.textMuted,
                               fontStyle: FontStyle.italic)),
                     if (isDone)
                       Text(

@@ -103,8 +103,8 @@ class _DashboardPageState extends State<DashboardPage> {
       body: items[currentIndex].page,
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
-        backgroundColor: Colors.white,
-        indicatorColor: AppTheme.softYellow,
+        backgroundColor: AppTheme.darkCard,
+        indicatorColor: AppTheme.softGreenDark.withValues(alpha: 0.25),
         onDestinationSelected: (index) {
           setState(() => currentIndex = index);
         },
@@ -228,7 +228,7 @@ class HomeTab extends StatelessWidget {
                   Text(
                     'Here is your $roleLabel overview for today.',
                     style: TextStyle(
-                        color: Colors.grey.shade700, fontSize: 15),
+                        color: AppTheme.textMuted, fontSize: 15),
                   ),
                   const SizedBox(height: 20),
 
@@ -289,7 +289,7 @@ class HomeTab extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: Center(
                         child: Text('No upcoming events',
-                            style: TextStyle(color: Colors.grey.shade500)),
+                            style: TextStyle(color: AppTheme.textMuted)),
                       ),
                     ),
 
@@ -501,17 +501,151 @@ class _CalendarTabState extends State<CalendarTab> {
                 cellAspectRatio: 0.9,
                 showWeekTileBorder: false,
                 hideDaysNotInMonth: true,
-                onCellTap: (events, date) {
-                  if (events.isEmpty) {
-                    setState(() => _selectedEvent = null);
-                    return;
+                headerStyle: HeaderStyle(
+                  headerTextStyle: const TextStyle(
+                    color: AppTheme.textLight,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: AppTheme.darkBg,
+                  ),
+                  leftIconConfig: const IconDataConfig(
+                    color: AppTheme.softGreen,
+                    size: 28,
+                  ),
+                  rightIconConfig: const IconDataConfig(
+                    color: AppTheme.softGreen,
+                    size: 28,
+                  ),
+                ),
+                weekDayBuilder: (day) {
+                  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                  return Container(
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: const BoxDecoration(
+                      color: AppTheme.darkCard,
+                      border: Border(
+                        bottom: BorderSide(color: AppTheme.darkBorder, width: 1),
+                      ),
+                    ),
+                    child: Text(
+                      days[day],
+                      style: const TextStyle(
+                        color: AppTheme.softGreen,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  );
+                },
+                cellBuilder: (date, events, isToday, isInMonth, hideDaysNotInMonth) {
+                  if (hideDaysNotInMonth && !isInMonth) {
+                    return Container(
+                      decoration: const BoxDecoration(
+                        color: AppTheme.darkBg,
+                        border: Border(
+                          right: BorderSide(color: AppTheme.darkBorder, width: 0.5),
+                          bottom: BorderSide(color: AppTheme.darkBorder, width: 0.5),
+                        ),
+                      ),
+                    );
                   }
 
-                  if (events.length == 1) {
-                    setState(() => _selectedEvent = events.first);
-                  } else {
-                    _showEventSelection(events);
-                  }
+                  final isSelected = _selectedEvent != null &&
+                      date.day == _selectedEvent!.date.day &&
+                      date.month == _selectedEvent!.date.month &&
+                      date.year == _selectedEvent!.date.year;
+
+                  return GestureDetector(
+                    onTap: () {
+                      if (events.isEmpty) {
+                        setState(() => _selectedEvent = null);
+                        return;
+                      }
+                      if (events.length == 1) {
+                        setState(() => _selectedEvent = events.first);
+                      } else {
+                        _showEventSelection(events);
+                      }
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppTheme.softGreenDark.withValues(alpha: 0.15)
+                            : isToday
+                                ? AppTheme.softGreenDark.withValues(alpha: 0.08)
+                                : AppTheme.darkBg,
+                        border: Border(
+                          right: const BorderSide(color: AppTheme.darkBorder, width: 0.5),
+                          bottom: const BorderSide(color: AppTheme.darkBorder, width: 0.5),
+                          top: isSelected
+                              ? const BorderSide(color: AppTheme.softGreenDark, width: 1.5)
+                              : BorderSide.none,
+                          left: isSelected
+                              ? const BorderSide(color: AppTheme.softGreenDark, width: 1.5)
+                              : BorderSide.none,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Day number
+                            Container(
+                              width: 26,
+                              height: 26,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isToday
+                                    ? AppTheme.softGreenDark
+                                    : Colors.transparent,
+                              ),
+                              child: Text(
+                                '${date.day}',
+                                style: TextStyle(
+                                  color: isToday
+                                      ? AppTheme.darkBg
+                                      : isInMonth
+                                          ? AppTheme.textLight
+                                          : AppTheme.textMuted,
+                                  fontWeight: isToday
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                            // Event dots
+                            if (events.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2, left: 2),
+                                child: Wrap(
+                                  spacing: 3,
+                                  children: events.take(3).map((e) {
+                                    return Container(
+                                      width: 6,
+                                      height: 6,
+                                      decoration: BoxDecoration(
+                                        color: e.color,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                onCellTap: (events, date) {
+                  // Handled in cellBuilder's GestureDetector
                 },
                 onEventTap: (event, date) {
                   setState(() => _selectedEvent = event);
@@ -537,11 +671,11 @@ class _CalendarTabState extends State<CalendarTab> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.touch_app_outlined, size: 48, color: Colors.grey.shade400),
+          Icon(Icons.touch_app_outlined, size: 48, color: AppTheme.textMuted),
           const SizedBox(height: 8),
           Text(
             'Tap an event day to view tasks',
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+            style: TextStyle(color: AppTheme.textMuted, fontSize: 14),
           ),
         ],
       ),
@@ -595,7 +729,7 @@ class _CalendarTabState extends State<CalendarTab> {
             const SizedBox(height: 4),
             Text(
               event.description!,
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+              style: TextStyle(fontSize: 13, color: AppTheme.textMuted),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -613,7 +747,7 @@ class _CalendarTabState extends State<CalendarTab> {
                   return Center(
                     child: Text(
                       'No tasks assigned to this event.',
-                      style: TextStyle(color: Colors.grey.shade500),
+                      style: TextStyle(color: AppTheme.textMuted),
                     ),
                   );
                 }
@@ -634,7 +768,7 @@ class _CalendarTabState extends State<CalendarTab> {
                   return Center(
                     child: Text(
                       'No tasks available.',
-                      style: TextStyle(color: Colors.grey.shade500),
+                      style: TextStyle(color: AppTheme.textMuted),
                     ),
                   );
                 }
@@ -712,7 +846,7 @@ class _CalendarTabState extends State<CalendarTab> {
                                         fontWeight: FontWeight.w600,
                                         fontSize: 14,
                                         decoration: isDone ? TextDecoration.lineThrough : null,
-                                        color: isDone ? Colors.grey : null,
+                                        color: isDone ? AppTheme.textMuted : null,
                                       ),
                                     ),
                                     if (task.description.isNotEmpty)
@@ -720,7 +854,7 @@ class _CalendarTabState extends State<CalendarTab> {
                                         padding: const EdgeInsets.only(top: 2),
                                         child: Text(
                                           task.description,
-                                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                                          style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
                                         ),
                                       ),
                                     const SizedBox(height: 4),
@@ -741,7 +875,7 @@ class _CalendarTabState extends State<CalendarTab> {
                                           'Claimed by ${task.claimedByName ?? 'another employee'}',
                                           style: TextStyle(
                                               fontSize: 11,
-                                              color: Colors.grey.shade600,
+                                              color: AppTheme.textMuted,
                                               fontStyle: FontStyle.italic))
                                     else if (isDone)
                                       Text(
@@ -832,10 +966,10 @@ class AnnouncementsTab extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.campaign_outlined, size: 64, color: Colors.grey),
+                  Icon(Icons.campaign_outlined, size: 64, color: AppTheme.textMuted),
                   SizedBox(height: 12),
                   Text('No announcements yet',
-                      style: TextStyle(fontSize: 16, color: Colors.grey)),
+                      style: TextStyle(fontSize: 16, color: AppTheme.textMuted)),
                 ],
               ),
             );
@@ -871,7 +1005,7 @@ class AnnouncementsTab extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade700,
+                    color: AppTheme.textMuted,
                   ),
                 ),
               ),
@@ -980,7 +1114,7 @@ class _ProfileTabState extends State<ProfileTab> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.darkCard,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -1144,7 +1278,7 @@ class _ProfileTabState extends State<ProfileTab> {
                                 Text(
                                   roleLabel,
                                   style: TextStyle(
-                                    color: Colors.grey.shade600,
+                                    color: AppTheme.textMuted,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -1167,7 +1301,7 @@ class _ProfileTabState extends State<ProfileTab> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey,
+                          color: AppTheme.textMuted,
                         ),
                       ),
                       const SizedBox(height: 4),

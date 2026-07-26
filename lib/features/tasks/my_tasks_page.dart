@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/statuses.dart';
 import '../../models/event_task.dart';
+import '../../theme.dart';
 import 'task_service.dart';
 
 class MyTasksPage extends StatelessWidget {
@@ -91,13 +92,13 @@ class MyTasksPage extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.task_alt, size: 64, color: Colors.grey),
+          Icon(Icons.task_alt, size: 64, color: AppTheme.textMuted),
           SizedBox(height: 12),
           Text('No tasks assigned to you yet',
-              style: TextStyle(fontSize: 16, color: Colors.grey)),
+              style: TextStyle(fontSize: 16, color: AppTheme.textMuted)),
           SizedBox(height: 8),
           Text('Claim tasks from the Calendar',
-              style: TextStyle(color: Colors.grey)),
+              style: TextStyle(color: AppTheme.textMuted)),
         ],
       ),
     );
@@ -119,7 +120,7 @@ class _MyTaskCard extends StatelessWidget {
       case TaskStatus.pending:
         return Colors.deepPurple;
       default:
-        return Colors.grey;
+        return AppTheme.textMuted;
     }
   }
 
@@ -183,7 +184,7 @@ class _MyTaskCard extends StatelessWidget {
             if (task.description.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(task.description,
-                  style: TextStyle(color: Colors.grey.shade700)),
+                  style: TextStyle(color: AppTheme.textMuted)),
             ],
             const SizedBox(height: 12),
 

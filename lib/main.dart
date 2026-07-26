@@ -19,9 +19,10 @@ class PadelSquareApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'PadelSquare Staff',
+      title: 'MyClub Staff',
       theme: AppTheme.lightTheme,
-      themeMode: ThemeMode.light,
+      darkTheme: AppTheme.lightTheme,
+      themeMode: ThemeMode.dark,
       home: const AuthGate(),
     );
   }
