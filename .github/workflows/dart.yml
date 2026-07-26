@@ -19,6 +19,19 @@ jobs:
       - name: Build Flutter Web
         run: flutter build web --release
 
+      - name: Zip Web App
+        run: zip -qq -r -9 a-club-web.zip build/web
+
+      - name: Upload Web App to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: a-club-web.zip
+          asset_name: a-club-web.zip
+          tag: v1.0
+          overwrite: true
+          body: "A-Club Web App - Latest Release"
+
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -48,10 +61,10 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: build/app/outputs/flutter-apk/app-release.apk
-          asset_name: PadelSquare-Staff.apk
+          asset_name: a-club.apk
           tag: v1.0
           overwrite: true
-          body: "PadelSquare Staff App - Latest Release"
+          body: "A-Club Staff App - Latest Release"
 
   build-ios:
     name: 🍎 iOS Build
@@ -126,14 +139,14 @@ jobs:
       - name: Zip macOS App
         run: |
           cd build/macos/Build/Products/Release
-          zip -r -9 PadelSquare-Staff-macOS.zip "padelsquare_staff_app.app"
+          zip -r -9 a-club-macOS.zip "padelsquare_staff_app.app"
 
       - name: Upload macOS App to Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/macos/Build/Products/Release/PadelSquare-Staff-macOS.zip
-          asset_name: PadelSquare-Staff-macOS.zip
+          file: build/macos/Build/Products/Release/a-club-macOS.zip
+          asset_name: a-club-macOS.zip
           tag: v1.0
           overwrite: true
-          body: "PadelSquare Staff App - Latest Release"
+          body: "A-Club Staff App - Latest Release"

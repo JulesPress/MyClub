@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MyClub'),
+        title: const Text('A-Club'),
         actions: [
           IconButton(
             onPressed: () async => _authService.signOut(),

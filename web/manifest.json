@@ -1,11 +1,11 @@
 {
-    "name": "MyClub Staff",
-    "short_name": "MyClub",
+    "name": "A-Club",
+    "short_name": "A-Club",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0A0F0A",
     "theme_color": "#0A0F0A",
-    "description": "MyClub — Staff management platform for padel clubs",
+    "description": "A-Club — Staff management platform for padel clubs",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
