@@ -1,0 +1,13 @@
+{
+  "projects": {},
+  "targets": {
+    "padelsquare-d0697": {
+      "hosting": {
+        "myclub-padel": [
+          "myclub-padel"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

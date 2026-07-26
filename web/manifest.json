@@ -1,11 +1,11 @@
 {
-    "name": "padelsquare_staff_app",
-    "short_name": "padelsquare_staff_app",
+    "name": "PadelSquare Staff",
+    "short_name": "PadelSquare",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFFCF4",
+    "theme_color": "#6FAF7B",
+    "description": "PadelSquare Staff - Manage your padel club operations",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

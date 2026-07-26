@@ -43,12 +43,35 @@ class _EventDetailPageState extends State<EventDetailPage> {
 
   void _showEditDetailsBottomSheet(
     BuildContext context,
+    String currentTitle,
     String currentDescription,
     String currentCanvaLink,
+    DateTime? currentDate,
   ) {
+    final titleController = TextEditingController(text: currentTitle);
     final descController = TextEditingController(text: currentDescription);
     final linkController = TextEditingController(text: currentCanvaLink);
+    DateTime? selectedDate = currentDate;
+    TimeOfDay? selectedTime = currentDate != null
+        ? TimeOfDay(hour: currentDate.hour, minute: currentDate.minute)
+        : null;
     bool saving = false;
+
+    String _formatDate(DateTime? date, TimeOfDay? time) {
+      if (date == null) return 'No date selected';
+      const weekdays = [
+        'Monday', 'Tuesday', 'Wednesday', 'Thursday',
+        'Friday', 'Saturday', 'Sunday'
+      ];
+      const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      final t = time ?? TimeOfDay(hour: date.hour, minute: date.minute);
+      final timeStr =
+          '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+      return '${weekdays[date.weekday - 1]}, ${date.day} ${months[date.month - 1]} ${date.year} • $timeStr';
+    }
 
     showModalBottomSheet(
       context: context,
@@ -67,97 +90,250 @@ class _EventDetailPageState extends State<EventDetailPage> {
                 right: 24,
                 top: 24,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Edit Event Info',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: descController,
-                    decoration: InputDecoration(
-                      labelText: 'Event Description',
-                      hintText: 'Enter general details about the event...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Edit Event Info',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    maxLines: 4,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: linkController,
-                    decoration: InputDecoration(
-                      labelText: 'Canva Template Link',
-                      hintText: 'https://canva.com/...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: saving
-                          ? null
-                          : () async {
-                              final newDesc = descController.text.trim();
-                              final newLink = linkController.text.trim();
-
-                              setModalState(() => saving = true);
-
-                              try {
-                                await FirebaseFirestore.instance
-                                    .collection('events')
-                                    .doc(widget.eventId)
-                                    .update({
-                                  'description': newDesc,
-                                  'canvaLink': newLink,
-                                });
-
-                                if (context.mounted) {
-                                  Navigator.pop(context);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Event updated successfully'),
-                                    ),
-                                  );
-                                }
-                              } catch (e) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Error: $e')),
-                                  );
-                                }
-                              } finally {
-                                setModalState(() => saving = false);
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.softGreenDark,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: titleController,
+                      decoration: InputDecoration(
+                        labelText: 'Event Title',
+                        hintText: 'Enter the event name...',
+                        prefixIcon: const Icon(Icons.title),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      child: saving
-                          ? const SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2.5,
-                              ),
-                            )
-                          : const Text('Save Changes', style: TextStyle(fontSize: 16)),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 16),
+
+                    // Date & Time Rescheduling
+                    const Text(
+                      'Reschedule',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.textDark,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () async {
+                              final picked = await showDatePicker(
+                                context: context,
+                                initialDate: selectedDate ?? DateTime.now(),
+                                firstDate: DateTime(2024),
+                                lastDate: DateTime(2030),
+                                builder: (context, child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      colorScheme: const ColorScheme.light(
+                                        primary: AppTheme.softGreenDark,
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
+                              );
+                              if (picked != null) {
+                                setModalState(() => selectedDate = picked);
+                              }
+                            },
+                            icon: const Icon(Icons.calendar_today, size: 18),
+                            label: Text(
+                              selectedDate != null
+                                  ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
+                                  : 'Pick Date',
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppTheme.textDark,
+                              side: BorderSide(color: Colors.grey.shade400),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () async {
+                              final picked = await showTimePicker(
+                                context: context,
+                                initialTime: selectedTime ?? TimeOfDay.now(),
+                                builder: (context, child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      colorScheme: const ColorScheme.light(
+                                        primary: AppTheme.softGreenDark,
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
+                              );
+                              if (picked != null) {
+                                setModalState(() => selectedTime = picked);
+                              }
+                            },
+                            icon: const Icon(Icons.access_time, size: 18),
+                            label: Text(
+                              selectedTime != null
+                                  ? '${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}'
+                                  : 'Pick Time',
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppTheme.textDark,
+                              side: BorderSide(color: Colors.grey.shade400),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (selectedDate != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          _formatDate(selectedDate, selectedTime),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade600,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 16),
+
+                    TextField(
+                      controller: descController,
+                      decoration: InputDecoration(
+                        labelText: 'Event Description',
+                        hintText: 'Enter general details about the event...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      maxLines: 4,
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: linkController,
+                      decoration: InputDecoration(
+                        labelText: 'Canva Template Link',
+                        hintText: 'https://canva.com/...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: saving
+                            ? null
+                            : () async {
+                                final newTitle = titleController.text.trim();
+                                final newDesc = descController.text.trim();
+                                final newLink = linkController.text.trim();
+
+                                if (newTitle.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Title cannot be empty'),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                setModalState(() => saving = true);
+
+                                try {
+                                  final Map<String, dynamic> updateData = {
+                                    'title': newTitle,
+                                    'description': newDesc,
+                                    'canvaLink': newLink,
+                                  };
+
+                                  // Update date if changed
+                                  if (selectedDate != null) {
+                                    final time = selectedTime ??
+                                        (currentDate != null
+                                            ? TimeOfDay(
+                                                hour: currentDate.hour,
+                                                minute: currentDate.minute)
+                                            : const TimeOfDay(hour: 0, minute: 0));
+                                    final newDateTime = DateTime(
+                                      selectedDate!.year,
+                                      selectedDate!.month,
+                                      selectedDate!.day,
+                                      time.hour,
+                                      time.minute,
+                                    );
+                                    updateData['date'] = Timestamp.fromDate(newDateTime);
+                                  }
+
+                                  await FirebaseFirestore.instance
+                                      .collection('events')
+                                      .doc(widget.eventId)
+                                      .update(updateData);
+
+                                  if (context.mounted) {
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Event updated successfully'),
+                                      ),
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Error: $e')),
+                                    );
+                                  }
+                                } finally {
+                                  setModalState(() => saving = false);
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.softGreenDark,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+                        child: saving
+                            ? const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2.5,
+                                ),
+                              )
+                            : const Text('Save Changes', style: TextStyle(fontSize: 16)),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -228,8 +404,10 @@ class _EventDetailPageState extends State<EventDetailPage> {
                   icon: const Icon(Icons.edit),
                   onPressed: () => _showEditDetailsBottomSheet(
                     context,
+                    title,
                     description,
                     canvaLink,
+                    date,
                   ),
                 ),
             ],

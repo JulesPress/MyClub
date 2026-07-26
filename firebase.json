@@ -2,6 +2,32 @@
   "firestore": {
     "rules": "firestore.rules"
   },
+  "hosting": {
+    "site": "myclub-padel",
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|mjs)",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/javascript"
+          }
+        ]
+      }
+    ]
+  },
   "flutter": {
     "platforms": {
       "android": {
@@ -11,12 +37,19 @@
           "fileOutput": "android/app/google-services.json"
         }
       },
+      "web": {
+        "default": {
+          "projectId": "padelsquare-d0697",
+          "appId": "1:808304819683:web:03055c8b3969c5361274d6"
+        }
+      },
       "dart": {
         "lib/firebase_options.dart": {
           "projectId": "padelsquare-d0697",
           "configurations": {
             "android": "1:808304819683:android:67da935b3789f9af1274d6",
-            "ios": "1:808304819683:ios:2c09d427862ce9b11274d6"
+            "ios": "1:808304819683:ios:2c09d427862ce9b11274d6",
+            "web": "1:808304819683:web:03055c8b3969c5361274d6"
           }
         }
       }
